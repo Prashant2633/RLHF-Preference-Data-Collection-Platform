@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  body {
+    @apply bg-background text-textWarm font-sans antialiased;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #16151A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2E2B35;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF7A33;
+}
+
+/* Custom geometric circuit board grid overlay background */
+.geometric-bg {
+  background-image: radial-gradient(rgba(237, 234, 224, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Subtle glow effects */
+.glow-amber {
+  box-shadow: 0 0 15px rgba(255, 122, 51, 0.15);
+}
+
+.glow-teal {
+  box-shadow: 0 0 15px rgba(79, 209, 197, 0.15);
+}
