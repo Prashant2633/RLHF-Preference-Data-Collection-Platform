@@ -13,7 +13,12 @@ from app.models import Annotator
 if not settings.MOCK_AUTH:
     if settings.FIREBASE_SERVICE_ACCOUNT_JSON:
         try:
-            cred = credentials.Certificate(settings.FIREBASE_SERVICE_ACCOUNT_JSON)
+            import json
+            if settings.FIREBASE_SERVICE_ACCOUNT_JSON.strip().startswith("{"):
+                service_account_info = json.loads(settings.FIREBASE_SERVICE_ACCOUNT_JSON)
+                cred = credentials.Certificate(service_account_info)
+            else:
+                cred = credentials.Certificate(settings.FIREBASE_SERVICE_ACCOUNT_JSON)
             firebase_admin.initialize_app(cred)
         except ValueError:
             # Already initialized
