@@ -14,8 +14,14 @@ if not settings.MOCK_AUTH:
     if settings.FIREBASE_SERVICE_ACCOUNT_JSON:
         try:
             import json
-            if settings.FIREBASE_SERVICE_ACCOUNT_JSON.strip().startswith("{"):
-                service_account_info = json.loads(settings.FIREBASE_SERVICE_ACCOUNT_JSON)
+            json_str = settings.FIREBASE_SERVICE_ACCOUNT_JSON.strip()
+            # Auto-wrap with braces if the user missed copying them
+            if "service_account" in json_str:
+                if not json_str.startswith("{"):
+                    json_str = "{" + json_str
+                if not json_str.endswith("}"):
+                    json_str = json_str + "}"
+                service_account_info = json.loads(json_str)
                 cred = credentials.Certificate(service_account_info)
             else:
                 cred = credentials.Certificate(settings.FIREBASE_SERVICE_ACCOUNT_JSON)
