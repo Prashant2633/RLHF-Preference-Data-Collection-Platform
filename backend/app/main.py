@@ -9,8 +9,12 @@ from app.routers import tasks, pairs, calibration, export
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: create tables
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+    except Exception as e:
+        import sys
+        print(f"Database initialization warning: {e}", file=sys.stderr)
     yield
     # Shutdown: clean up engine
     await engine.dispose()

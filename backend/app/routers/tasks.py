@@ -62,21 +62,27 @@ async def generate_response_pair(
             detail="Task not found"
         )
     
-    # Generate trajectories
-    try:
-        trajectory_groq = await generate_trajectory(task.prompt, task.available_tools, "groq")
-    except Exception as e:
+    # Generate trajectories in parallel to prevent Vercel 10-second serverless timeout
+    import asyncio
+    
+    results = await asyncio.gather(
+        generate_trajectory(task.prompt, task.available_tools, "groq"),
+        generate_trajectory(task.prompt, task.available_tools, "gemini"),
+        return_exceptions=True
+    )
+    
+    trajectory_groq, trajectory_gemini = results
+    
+    if isinstance(trajectory_groq, Exception):
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"Groq generation failed: {str(e)}"
+            detail=f"Groq generation failed: {str(trajectory_groq)}"
         )
         
-    try:
-        trajectory_gemini = await generate_trajectory(task.prompt, task.available_tools, "gemini")
-    except Exception as e:
+    if isinstance(trajectory_gemini, Exception):
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"Gemini generation failed: {str(e)}"
+            detail=f"Gemini generation failed: {str(trajectory_gemini)}"
         )
 
     # Save Agent Runs

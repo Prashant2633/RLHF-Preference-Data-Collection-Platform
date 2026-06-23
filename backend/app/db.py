@@ -8,6 +8,8 @@ DATABASE_URL = settings.DATABASE_URL
 connect_args = {}
 if "localhost" not in DATABASE_URL and "127.0.0.1" not in DATABASE_URL:
     connect_args["ssl"] = True
+    # Neon PgBouncer transaction pooler does not support prepared statements
+    connect_args["prepared_statement_cache_size"] = 0
 
 engine = create_async_engine(DATABASE_URL, echo=False, connect_args=connect_args)
 AsyncSessionLocal = async_sessionmaker(
