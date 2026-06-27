@@ -4,7 +4,7 @@ import uuid
 from typing import Literal, Any
 from groq import AsyncGroq
 import google.generativeai as genai
-from google.generativeai.types import content_types
+import google.ai.generativelanguage as glm
 
 from app.config import settings
 from app.llm.tools import execute_tool
@@ -291,9 +291,11 @@ async def _generate_gemini_trajectory(prompt: str, available_tools: list[dict[st
                 
                 # Build Gemini function response part
                 tool_responses_parts.append(
-                    content_types.Part.from_function_response(
-                        name=tool_name,
-                        response=tool_res
+                    glm.Part(
+                        function_response=glm.FunctionResponse(
+                            name=tool_name,
+                            response=tool_res
+                        )
                     )
                 )
                 
